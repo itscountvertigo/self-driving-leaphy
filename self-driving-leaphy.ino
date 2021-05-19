@@ -6,7 +6,14 @@ float reverseDistance = 10;
 
 float escapeOffset = 5;
 
-float firstTurnTime = 5;
+float firstTurnIterations = 5;
+
+float staticCounter = 0;
+float staticCounterMax = 5;
+
+float reverseIterations = 10;
+
+float currentDistance = 0;
 
 void nearWall(float currentDistance) {
   setLed(155, 165, 0);
@@ -16,7 +23,7 @@ void nearWall(float currentDistance) {
     tooCloseToWall();
   }
 
-  for (int i = 0; i <= firstTurnTime; i++) { // turn clockwise for firstTurnTime iterations
+  for (int i = 0; i < firstTurnIterations; i++) { // turn clockwise for firstTurnIterations iterations
     setMotor(9, 50);
     setMotor(10, -100);
   }
@@ -56,6 +63,21 @@ void setup() {
 }
 
 void loop() {
+  if (currentDistance == getDistance()) { // if the distance == last distance, add 1 to staticCounter
+    staticCounter += 1;
+  } else {
+    staticCounter = 0;
+  }
+
+  if (staticCounter >= staticCounterMax){
+    for (int i = 0; i < reverseIterations; i++) {
+      setLed(255, 0, 0);
+      tone(4, 880, 200);
+      setMotor(9, -75);
+      setMotor(10, -75);
+    }
+  }
+  
   // normal driving
   setLed(0, 255, 0);
   moveMotors(1, 80);
@@ -63,4 +85,7 @@ void loop() {
   if (getDistance() < dangerDistance) {
     nearWall(getDistance());
   }
+
+  float currentDistance = getDistance();
+  
 }
